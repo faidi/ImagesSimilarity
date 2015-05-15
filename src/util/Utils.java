@@ -10,8 +10,8 @@ import javax.imageio.ImageIO;
 import services.ImageForWeb;
  
 
-import com.projet.outiles.StaticValues;
-import com.projet.outiles.Utiles;
+//import com.projet.outiles.StaticValues;
+//import com.projet.outiles.Utiles;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import dao.Image;
@@ -117,7 +117,7 @@ public class Utils {
 
 	private static double soustPowSum(double[] v1, double[] v2) {
 		double rs = 0;
-		for (int i = 0; i < v1.length; i++) rs = (float) Math.pow((v1[i] - v2[i]), 2);
+		for (int i = 0; i < v1.length; i++) rs+= (float) Math.pow((v1[i] - v2[i]), 2);
 		return rs;
 
 	}
@@ -152,7 +152,7 @@ public class Utils {
 
 	}
 
-public static   ImageForWeb encodeForWeb(Image img,double dist){
+	public static   ImageForWeb encodeForWeb(Image img,double dist){
 	
 	String encoded = Base64.encode(img.getFichier());
 	String encodedString = new String(encoded);

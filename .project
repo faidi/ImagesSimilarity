@@ -3,7 +3,7 @@
 	<name>ImagesSimilarity</name>
 	<comment></comment>
 	<projects>
-		<project>Projet_IP9</project>
+		<project>Projet_IP9_API</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

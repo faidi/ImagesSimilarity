@@ -1,5 +1,8 @@
 package services;
 
+/* 
+ * cette classe permet de exporter une images  trouvée en résultat en un format  spécifique  pour pouvoir l'afficher dans le JsP
+ */
 public class ImageForWeb {
 	private Long id;
 	private String name;

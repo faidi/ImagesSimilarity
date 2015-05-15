@@ -12,7 +12,9 @@ import org.hibernate.Session;
 import util.HibernateUtil;
 import dao.Image;
 import dao.Signatures;
-
+/*
+ * c'est la classe qui contiet toutes les opération à faire sur les images vis à vis la base de données
+ */
 public class ImageRepository {
 
 	public static void addImage(Image img) {
@@ -32,6 +34,7 @@ public class ImageRepository {
 
 	}
 
+	//convertir une image en  bytes en un fichier
 	public static File writeBytesToFile(byte[] bytes) throws IOException {
 
 		File theFile = null;

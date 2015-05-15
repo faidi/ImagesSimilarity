@@ -1,4 +1,4 @@
- package servlets;
+package servlets;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +23,9 @@ import javax.servlet.http.Part;
 import services.ImageRepository;
 
 import com.projet.controleur.Controleur;
-import com.projet.outiles.Signature;
+//import com.projet.outiles.Signature;
+
+import com.projet.outils.Signature;
 
 import dao.Image;
 import dao.Signatures;
@@ -31,13 +33,13 @@ import dao.Signatures;
 /**
  * Servlet implementation class uploadImage
  */
- 
+
 // taille maximal du fichier
 @WebServlet(name = "upload", description = "récupérer une image ,calculer ces signature et la stocker dans la base de données", urlPatterns = { "/upload" })
-@MultipartConfig(maxFileSize = 50177215) 
-public class  uploadImage extends HttpServlet {
+@MultipartConfig(maxFileSize = 50177215)
+public class uploadImage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private final static Logger LOGGER = Logger.getLogger( uploadImage.class
+	private final static Logger LOGGER = Logger.getLogger(uploadImage.class
 			.getCanonicalName());
 	File destinationDir = new File("/tmp");
 
@@ -48,67 +50,72 @@ public class  uploadImage extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		//final String filePath = request.getParameter("image");
+
 		final Part filePart = request.getPart("image");
 		final String fileName = getFileName(filePart);
 		OutputStream out = null;
 		InputStream filecontent = null;
-		
-		 final PrintWriter writer = response.getWriter();
-		 File tmpFile = new File(destinationDir + File.separator+fileName);
-       
-             
+
+		final PrintWriter writer = response.getWriter();
+		File tmpFile = new File(destinationDir + File.separator + fileName);
+
 		try {
-			 
-		//	System.out.println(filePath.substring(filePath.lastIndexOf("\\")+1)  );
-			
+
+			/* lire l'image en entrée et créer un stocker dans le dossier Tmp
+			 * 
+			 */
+
 			out = new FileOutputStream(tmpFile);
 
-			  filecontent = filePart.getInputStream();
-			
-			
-			 
-			  int read = 0;
-			  final byte[] bytes = new byte[1024];
-			    
-			  while ((read = filecontent.read(bytes)) != -1) { 
-				  out.write(bytes,0, read); }
-			  
-			 
+			filecontent = filePart.getInputStream();
 
-			LOGGER.log(Level.INFO, "File{0}being uploaded  ",
-					new Object[] { fileName });
-         
-		 Image img=new Image( readBytesFromFile(tmpFile)  ,fileName );
-		 Controleur c=new Controleur();
-		 
-		 Signature  sig2= c.calculerSignature(tmpFile);
-		 //fabriquer une signatures destiné pour la BD 
-		 Signatures sig=new Signatures( sig2.getTabRg(),sig2.getTabBy(),sig2.getTabWb());
-		 
-		 img.setSignature(sig);
-		 sig.setImage(img);
-		 ImageRepository.addImage(img );
-		
-		 
-		 
- 			/*
-			 * calcule de la signature ,et enregistrement
+			int read = 0;
+			final byte[] bytes = new byte[1024];
+
+			while ((read = filecontent.read(bytes)) != -1) {
+				out.write(bytes, 0, read);
+			}
+
+			/* créer un objet Image à l'aide du fichier et son nom pour pouvoir
+			 * 
 			 */
-			 
-  
-		  
-		   
-		  RequestDispatcher requestDispatcher; 
-		  requestDispatcher = request.getRequestDispatcher("/success.jsp");
-		  requestDispatcher.forward(request, response);
+			Image img = new Image(readBytesFromFile(tmpFile), fileName);
+			
+			/*instancier le controlleur
+			 * 
+			 */
+			Controleur c = new Controleur();
+			
+			/* calcule signature
+			 * 
+			 */
+			Signature sig2 = c.calculerSignature(tmpFile);
+			/*  fabriquer une signatures destiné pour la BD
+			 * 
+			 */
+			Signatures sig = new Signatures(sig2.getTabRg(), sig2.getTabBy(),
+					sig2.getTabWb());
+
+			// attrbuer la signature à l'image et enregistrer les deux dans la
+			// base de données
+			img.setSignature(sig);
+			sig.setImage(img);
+			
+			
+			ImageRepository.addImage(img);
+
+			RequestDispatcher requestDispatcher;
+			requestDispatcher = request.getRequestDispatcher("/success.jsp");
+			requestDispatcher.forward(request, response);
+			
+			
 		} catch (FileNotFoundException fne) {
 			writer.println("vous n'avez pas choisit un fichier "
-					+ " merci d choisir un nouveaux fichier "
-					+ "location.");
+					+ " merci d choisir un nouveaux fichier " + "location.");
 			writer.println("<br/> ERROR: " + fne.getMessage());
 
-			LOGGER.log(Level.SEVERE, "un probléme pendant le chargement. Error: {0}",
+			LOGGER.log(Level.SEVERE,
+					"un probléme pendant le chargement. Error: {0}",
 					new Object[] { fne.getMessage() });
 		} finally {
 			if (out != null) {
@@ -124,6 +131,7 @@ public class  uploadImage extends HttpServlet {
 
 	}
 
+	// lire le nom du fichier
 	private String getFileName(final Part part) {
 		final String partHeader = part.getHeader("content-disposition");
 
@@ -135,38 +143,42 @@ public class  uploadImage extends HttpServlet {
 		}
 		return null;
 	}
-	
-	 public static byte[] readBytesFromFile(File file) throws IOException {
-	      InputStream is = new FileInputStream(file);
-	      
-	      // Get the size of the file
-	      long length = file.length();
-	  
-	      // You cannot create an array using a long type.
-	      // It needs to be an int type.
-	      // Before converting to an int type, check
-	      // to ensure that file is not larger than Integer.MAX_VALUE.
-	      if (length > Integer.MAX_VALUE) {
-	        throw new IOException("Could not completely read file " + file.getName() + " as it is too long (" + length + " bytes, max supported " + Integer.MAX_VALUE + ")");
-	      }
-	  
-	      // Create the byte array to hold the data
-	      byte[] bytes = new byte[(int)length];
-	  
-	      // Read in the bytes
-	      int offset = 0;
-	      int numRead = 0;
-	      while (offset < bytes.length && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
-	          offset += numRead;
-	      }
-	  
-	      // Ensure all the bytes have been read in
-	      if (offset < bytes.length) {
-	          throw new IOException("Could not completely read file " + file.getName());
-	      }
-	  
-	      // Close the input stream and return bytes
-	      is.close();
-	      return bytes;
-	  }
+
+	public static byte[] readBytesFromFile(File file) throws IOException {
+		InputStream is = new FileInputStream(file);
+
+		// Get the size of the file
+		long length = file.length();
+
+		// You cannot create an array using a long type.
+		// It needs to be an int type.
+		// Before converting to an int type, check
+		// to ensure that file is not larger than Integer.MAX_VALUE.
+		if (length > Integer.MAX_VALUE) {
+			throw new IOException("Could not completely read file "
+					+ file.getName() + " as it is too long (" + length
+					+ " bytes, max supported " + Integer.MAX_VALUE + ")");
+		}
+
+		// Create the byte array to hold the data
+		byte[] bytes = new byte[(int) length];
+
+		// Read in the bytes
+		int offset = 0;
+		int numRead = 0;
+		while (offset < bytes.length
+				&& (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+			offset += numRead;
+		}
+
+		// Ensure all the bytes have been read in
+		if (offset < bytes.length) {
+			throw new IOException("Could not completely read file "
+					+ file.getName());
+		}
+
+		// Close the input stream and return bytes
+		is.close();
+		return bytes;
+	}
 }

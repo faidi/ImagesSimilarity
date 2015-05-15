@@ -26,14 +26,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import com.projet.controleur.Controleur;
-import com.projet.outiles.CalculeSimilariteSig;
-import com.projet.outiles.Signature;
+import com.projet.outils.Signature;
+//import com.projet.outiles.CalculeSimilariteSig;
+//import com.projet.outiles.Signature;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import com.sun.tools.javac.code.Attribute.Array;
 
 import services.ImageForWeb;
 import services.ImageRepository;
-
 import services.SignatureRepository;
 import dao.Image;
 import dao.Signatures;
@@ -54,7 +54,8 @@ public class RechercheImage extends HttpServlet {
 	ArrayList<Image> listImage = new ArrayList<Image>();
 	ArrayList<ImageForWeb> ltw = new ArrayList<ImageForWeb>();
 	ArrayList<ImageForWeb> ltw2 = new ArrayList<ImageForWeb>();
-	Signatures sigUploaded = new Signatures();
+	ArrayList<ImageForWeb> ltw3 = new ArrayList<ImageForWeb>();
+	Signatures sigUploaded;
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -62,20 +63,20 @@ public class RechercheImage extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		// final String filePath = request.getParameter("image");
+
 		final Part filePart = request.getPart("image");
 		final String fileName = getFileName(filePart);
+
 		OutputStream out = null;
 		InputStream filecontent = null;
 
 		final PrintWriter writer = response.getWriter();
+
 		File tmpFile = new File(destinationDir + File.separator + fileName);
 
 		try {
-
+			// lire l'image en entrée et créer un stocker dans le dossier Tmp
 			out = new FileOutputStream(tmpFile);
-
 			filecontent = filePart.getInputStream();
 
 			int read = 0;
@@ -84,83 +85,117 @@ public class RechercheImage extends HttpServlet {
 			while ((read = filecontent.read(bytes)) != -1) {
 				out.write(bytes, 0, read);
 			}
-
-			LOGGER.log(Level.INFO, "File{0}being uploaded to {1}",
-					new Object[] { fileName });
-
+			// créer un objet Image à l'aide du fichier et son nom pour pouvoir
+			// le comparer avec les images de la base
 			Image img = new Image(readBytesFromFile(tmpFile), fileName);
-			ImageForWeb imgW = Utils.encodeForWeb(img, 0);
-			sigUploaded = Utils.calculerSignature(tmpFile);
 
+			// encoder l'image charger pour pouvoir la réaffichier dans la JSP
+			ImageForWeb imgW = Utils.encodeForWeb(img, 0);
+			Controleur c = new Controleur();
+
+			Signature sig2 = c.calculerSignature(tmpFile);
+			// calcule de la signature
+			// sigUploaded = Utils.calculerSignature(tmpFile);
+			sigUploaded = new Signatures(sig2.getTabRg(), sig2.getTabBy(),
+					sig2.getTabWb());
+
+			// initialiser les distance à 0
 			double distance = 0;
 			double distance2 = 0;
+			double distance3 = 0;
+			
+
+			// lire toute les signatures depuis la base de données
 			Iterator<Signatures> signatures = SignatureRepository
 					.getAllSignatures().iterator();
+
+			// néttoyer les tableau d'images résultat envoyer précédement à la
+			// jsp
 			ltw.clear();
+			ltw2.clear();
+			ltw3.clear();
 			
+
+			// créer un Objet signature pour le calcule de similarité via algo de l'API
+			  
 			Signature sig2Uploaded = new Signature(sigUploaded.getTabRG(),
 					sigUploaded.getTabBY(), sigUploaded.getTabWB());
-			ltw2.clear();
+
 			while (signatures.hasNext()) {
 
 				Signatures sigFromDB = signatures.next();
+
+				/**
+				 * calcule de la distance euclidienne entre la signature de
+				 * l'image charger et chaque signature de la base
+				 */
+
 				distance = (Utils.calculerDistanceEuclidienne(sigUploaded,
 						sigFromDB));
 
-				System.out.println("la distance est de : " + distance);
-				
-				
-				
-				if (distance <=  0.07) {
+				distance = (double) Math.round(distance * 100);
+
+				/**
+				 * si la distance est jugé similaire on l'ajoute dans une liste
+				 * distiné pour la JSP
+				 */
+
+				if (distance <= 70) {
 
 					ltw.add(Utils.encodeForWeb(sigFromDB.getImage(), distance));
 				}
-				System.out.println("je commenceeeeeeeeeeeeeeeeeeeeee");
-				
-				// Signatures s2 = signatures.next();
-				
-				
+				/**
+				 * création d'un objet signature(pour algo similarité) via les
+				 * signatures depuis la base de données
+				 **/
 				Signature sig2fromDB = new Signature(sigFromDB.getTabRG(),
 						sigFromDB.getTabBY(), sigFromDB.getTabWB());
+				/** calcule de la distance de similarité */
 
-				distance2 = Controleur.calculerDeSimilarite(sig2Uploaded,
-						sig2fromDB);
+				distance2 = Controleur.calculDeSimilariteDI(sig2Uploaded, sig2fromDB);
 
-				System.out.println("la distance est de sim" + distance);
-				if (distance2  >= 0.7) {
+				distance2 = (double) Math.round(distance2 * 100);
+				// si la distance est jugé similaire on l'ajoute dans une liste
+				// pour la JSP
+				if (distance2 >= 30) {
 
 					ltw2.add(Utils.encodeForWeb(sigFromDB.getImage(), distance2));
 
 				}
 				
-				} //
+				distance3 = Controleur.calculDeSimilariteIH(sig2Uploaded, sig2fromDB);
+
+				distance3 = (double) Math.round(distance3 * 100);
+				// si la distance est jugé similaire on l'ajoute dans une liste
+				// pour la JSP
+				if (distance3 >= 30) {
+
+					ltw3.add(Utils.encodeForWeb(sigFromDB.getImage(), distance3));
+
+				}
+				
+				
+
+			}
+
+			// envoi de la liste 1 des images à la jsp
 			
-			
-			
-			
-			 
-			/*
-			 * getServletContext().getRequestDispatcher(
-			 * "/success.jsp").forward(request,response);
-			 */
-			// request.getRequestDispatcher("/success.jsp").forward(request,
-			// response);
-			//
+			request.setAttribute("images3", ltw3);
 			request.setAttribute("images2", ltw2);
+
 			request.setAttribute("images", ltw);
 			request.setAttribute("uploadedImg", imgW);
+
 			RequestDispatcher requestDispatcher;
 			requestDispatcher = request
 					.getRequestDispatcher("/result_search.jsp");
 			requestDispatcher.forward(request, response);
 
 		} catch (FileNotFoundException fne) {
-			writer.println("You either did not specify a file to upload or are "
-					+ "trying to upload a file to a protected or nonexistent "
-					+ "location.");
+			writer.println("vous n'avez pas choisit un fichier  ");
 			writer.println("<br/> ERROR: " + fne.getMessage());
 
-			LOGGER.log(Level.SEVERE, "Problems during file upload. Error: {0}",
+			LOGGER.log(Level.SEVERE, "Probléme pendant l'upload ",
 					new Object[] { fne.getMessage() });
 		} finally {
 			if (out != null) {
@@ -176,6 +211,7 @@ public class RechercheImage extends HttpServlet {
 
 	}
 
+	// lire le nom du fichier charger
 	private String getFileName(final Part part) {
 		final String partHeader = part.getHeader("content-disposition");
 
@@ -188,26 +224,21 @@ public class RechercheImage extends HttpServlet {
 		return null;
 	}
 
+	// lire un fichier en tant que chaine de bytes
 	public static byte[] readBytesFromFile(File file) throws IOException {
 		InputStream is = new FileInputStream(file);
 
 		// Get the size of the file
 		long length = file.length();
 
-		// You cannot create an array using a long type.
-		// It needs to be an int type.
-		// Before converting to an int type, check
-		// to ensure that file is not larger than Integer.MAX_VALUE.
 		if (length > Integer.MAX_VALUE) {
 			throw new IOException("Could not completely read file "
 					+ file.getName() + " as it is too long (" + length
 					+ " bytes, max supported " + Integer.MAX_VALUE + ")");
 		}
 
-		// Create the byte array to hold the data
 		byte[] bytes = new byte[(int) length];
 
-		// Read in the bytes
 		int offset = 0;
 		int numRead = 0;
 		while (offset < bytes.length
@@ -215,13 +246,11 @@ public class RechercheImage extends HttpServlet {
 			offset += numRead;
 		}
 
-		// Ensure all the bytes have been read in
 		if (offset < bytes.length) {
 			throw new IOException("Could not completely read file "
 					+ file.getName());
 		}
 
-		// Close the input stream and return bytes
 		is.close();
 		return bytes;
 	}

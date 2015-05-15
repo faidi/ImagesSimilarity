@@ -2,7 +2,7 @@
     <wb-module deploy-name="ImagesSimilarity">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <dependent-module archiveName="Projet_IP9.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Projet_IP9/Projet_IP9">
+        <dependent-module archiveName="Projet_IP9_API.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Projet_IP9_API/Projet_IP9_API">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="ImagesSimilarity"/>

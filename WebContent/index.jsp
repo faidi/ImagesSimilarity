@@ -75,11 +75,11 @@
 						  src="resources/images/logo-descartes.png"
 						height="40" width="180">
 					</a>
-					<a class="navbar-brand" href="index.jsp"> <i class="glyphicon glyphicon-home"></i>
+					<a class="navbar-brand" href="index.jsp"> <i class="glyphicon glyphicon-home"  style="color:white;"></i>
 					</a>
-					<a class="navbar-brand" href="recherche.jsp"> <i class="glyphicon glyphicon-search"></i>
+					<a class="navbar-brand" href="recherche.jsp"> <i class="glyphicon glyphicon-search"  style="color:white;"></i>
 					</a>
-					<a class="navbar-brand" href="upload_image.jsp">  <i class="glyphicon glyphicon-plus"></i>
+					<a class="navbar-brand" href="upload_image.jsp">  <i class="glyphicon glyphicon-plus"  style="color:white;"></i>
 					</a>
 				</div>
 			</div>

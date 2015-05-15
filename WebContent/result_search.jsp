@@ -57,96 +57,161 @@
 	-moz-border-radius: 100%;
 	border-radius: 100%
 }
+
+#myWorkContent {
+	width: auto;
+	height: 210px;
+	border: 13px solid #bed5cd;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	white-space: nowrap;
+}
 </style>
 </head>
-<body>	
-<!-- navbar -->
-		<nav class=" navbar-descart navbar-fixed-top"
-			style="height: 60px;">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<a class="navbar-brand" href="#"> <img alt="Brand"
-						class="img img-rounded "
-						  src="resources/images/logo-descartes.png"
-						height="40" width="180">
-					</a>
-					<a class="navbar-brand" href="index.jsp"> <i class="glyphicon glyphicon-home"></i>
-					</a>
-					<a class="navbar-brand" href="recherche.jsp"> <i class="glyphicon glyphicon-search"></i>
-					</a>
-					<a class="navbar-brand" href="upload_image.jsp">  <i class="glyphicon glyphicon-plus"></i>
-					</a>
-				</div>
+<body>
+	<!-- navbar -->
+	<nav class=" navbar-descart navbar-fixed-top" style="height: 60px;">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#"> <img alt="Brand"
+					class="img img-rounded " src="resources/images/logo-descartes.png"
+					height="40" width="180">
+				</a> <a class="navbar-brand" href="index.jsp"> <i
+					class="glyphicon glyphicon-home" style="color: white;"></i>
+				</a> <a class="navbar-brand" href="recherche.jsp"> <i
+					class="glyphicon glyphicon-search" style="color: white;"></i>
+				</a> <a class="navbar-brand" href="upload_image.jsp"> <i
+					class="glyphicon glyphicon-plus" style="color: white;"></i>
+				</a>
 			</div>
-		</nav>
+		</div>
+	</nav>
 
-<p><h1 style="font-size: 40px;text-align:center; font-weight:900;color: #793059 ;  ">Bienvenue Dans L'application Descartes Images Similarity</h1></p>
-	
+	<p>
+	<h1
+		style="font-size: 40px; text-align: center; font-weight: 900; color: #793059;">Bienvenue
+		Dans L'application Descartes Images Similarity</h1>
+	</p>
 
 	<div class="container">
-		 
-		
-		
-		
-		<div class="row">
-		<div class="container col-sm-6 well" > 
-		<h3>Résultat Algo 1</h3>
-					<div class="row  "></div>
-					
-					<c:forEach items="${images }" var="image">
-						<div class="col-md-3">
-							<div class="mag">
-								<p>
-									<c:out value="${image['name']}" />
-									<br>
-									<c:out value="${image['distance']}" />
-								</p>
-								<br> <img data-toggle="magnify"
-									src="data:image/jpeg;base64,${image['image']}" alt=""
-									height="150" width="150">
-							</div>
-							<hr>
-						</div>
-						<!--/span-->
-
-					</c:forEach>
-					
-					</div> 
 
 
 
+		<div class="col-md-1">
+			<h6>L'Image chargée</h6>
 
-		<div class="container col-sm-6 well" > 
-		<h3>Résultat trouvé par l'algo 2</h3>
-		
-		<div class="row ">
-		
-		<c:forEach items="${images2 }" var="image">
-						<div class="col-md-3">
-							<div class="mag">
-								<p>
-									<c:out value="${image['name']}" />
-									<br>
-									<c:out value="${image['distance']}" />
-								</p>
-								<br> <img data-toggle="magnify"
-									src="data:image/jpeg;base64,${image['image']}" alt=""
-									height="150" width="150">
-							</div>
-							<hr>
-						</div>
-						<!--/span-->
 
-					</c:forEach>
-		
-		
-		</div></div>
-		
-		
+			<div class="mag">
+				<p>
+					<c:out value="${uploadedImg['name']}" />
+					<br>
+					<!--<c:out value="${image['distance']}" />-->
+				</p>
+				<br> <img data-toggle="magnify"
+					src="data:image/jpeg;base64,${uploadedImg['image']}" alt=""
+					height="80" width="80">
+			</div>
+			<hr>
+
 		</div>
-		
-		
-		 
+
+		<div>
+			 
+
+				<div class="container col-md-4 well">
+
+					<h3>Résultat Via la Distance Euclidienne :</h3>
+
+
+					<c:forEach items="${images }" var="image">
+						<div class="  col-md-3">
+							<div class="mag">
+								<p>
+									<c:out value="${image['name']}" />
+								<hr>
+								<br>
+								<c:out value="${image['distance']}" />
+								</p>
+								<br> <img data-toggle="magnify"
+									src="data:image/jpeg;base64,${image['image']}" alt=""
+									height="80" width="80">
+							</div>
+							<hr>
+						</div>
+						<!--/span-->
+
+					</c:forEach>
+
+				</div>
+
+
+				<!-- fin Distance euclidienne -->
+
+				&nbsp
+				<div class="container col-md-4 well">
+
+					<h3>Résultat de Intersection des Histogramme :</h3>
+					<div class="row ">
+
+						<c:forEach items="${images2 }" var="image">
+							<div class="  col-md-3">
+								<div class="mag">
+									<p>
+										<c:out value="${image['name']}" />
+									<hr>
+									<br>
+									<c:out value="${image['distance']}" />
+
+									</p>
+									<br> <img data-toggle="magnify"
+										src="data:image/jpeg;base64,${image['image']}" alt=""
+										height="80" width="80">
+								</div>
+								<hr>
+							</div>
+							<!--/span-->
+
+						</c:forEach>
+
+
+					</div>
+				</div>
+
+
+ <div class="container col-md-4 well">
+
+					<h3>Résultat Via la Distance d'intersection Swain et Balard :</h3>
+
+
+
+					<c:forEach items="${images3 }" var="image">
+						<div class="  col-md-3">
+							<div class="mag">
+								<p>
+									<c:out value="${image['name']}" />
+								<hr>
+								<br>
+								<c:out value="${image['distance']}" />
+								</p>
+								<br> <img data-toggle="magnify"
+									src="data:image/jpeg;base64,${image['image']}" alt=""
+									height="80" width="80">
+							</div>
+							<hr>
+						</div>
+						<!--/span-->
+
+					</c:forEach>
+
+				</div>
+
+
+				<!-- fin Distance D'Intersection Swain&Ballard-->
+
+ 
+
+
+
 		</div>
 		<!-- / .container -->
 		<script>
@@ -292,13 +357,15 @@
 
 			}(window.jQuery);
 		</script>
-<footer>  <nav class=" navbar-inverse  navbar-fixed-bottom"
-			style="height: 20px;">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<p style="color:white">©copyright Université Paris Descartes</p> 
+		<footer>
+			<nav class=" navbar-inverse  navbar-fixed-bottom"
+				style="height: 20px;">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<p style="color: white">©copyright Université Paris Descartes</p>
+					</div>
 				</div>
-			</div>
-		</nav>  </footer>
-		</body>
+			</nav>
+		</footer>
+</body>
 </html>

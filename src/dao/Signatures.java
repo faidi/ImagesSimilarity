@@ -12,7 +12,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
-import com.projet.outiles.StaticValues;
+import com.projet.outils.StaticValues;
+
+//import com.projet.outiles.StaticValues;
 
 @Entity
 @Table(name ="signatures")

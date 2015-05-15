@@ -24,12 +24,12 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<style type="text/css"> 
+<style type="text/css">
 </style>
 <title>Ajouter une image à la base de données</title>
 </head>
 
-
+<body>
 
 <!-- navbar -->
 <nav class=" navbar-descart navbar-fixed-top" style="height: 60px;">
@@ -38,13 +38,13 @@
 		<a class="navbar-brand" href="#"> <img alt="Brand"
 			class="img img-rounded " src="resources/images/logo-descartes.png"
 			height="40" width="180">
+		</a> <a class="navbar-brand" href="index.jsp"> <i
+			class="glyphicon glyphicon-home"  style="color:white;"></i>
+		</a> <a class="navbar-brand" href="recherche.jsp"> <i
+			class="glyphicon glyphicon-search"  style="color:white;"></i>
+		</a> <a class="navbar-brand" href="upload_image.jsp"> <i
+			class="glyphicon glyphicon-plus"  style="color:white;"></i>
 		</a>
-		<a class="navbar-brand" href="index.jsp"> <i class="glyphicon glyphicon-home"></i>
-					</a>
-					<a class="navbar-brand" href="recherche.jsp"> <i class="glyphicon glyphicon-search"></i>
-					</a>
-					<a class="navbar-brand" href="upload_image.jsp">  <i class="glyphicon glyphicon-plus"></i>
-					</a>
 	</div>
 </div>
 </nav>
@@ -54,36 +54,34 @@
 	style="font-size: 40px; text-align: center; font-weight: 900; color: #793059;">Bienvenue
 	Dans L'application Descartes Images Similarity</h1>
 </p>
-<br>
-<br>
-<br>
+ 
+ 
+ 
 <hr>
 
-<body>
-	
-	<div class="hero-widget well  "   >
-	<h5>Ajouter une image à la base de données</h5>
-		 
+
+	<div class="container " style="text-align: center;">
+		<div class="   hero-widget well  " style="text-align: center;">
+			<h5>Ajouter une image à la base de données</h5>
+
 			<form method="post" action="upload" enctype="multipart/form-data"
 				class="form-horizontal">
+				<input id="input-20" type="file" name="image"
+					accept="image/x-png, image/gif, image/jpeg" />
 
 
-				 
 
-					 
-						 
-							<input id="input-20" type="file"  name="image" />
+				<button class="btn   btn-circle btn-warning pull-right "
+					type="submit">
+					<span class="glyphicon glyphicon-send"></span>Charger l'image
+				</button>
 
-						  
-				 
-				  						<button class="btn   btn-circle  " type="submit">
-							<span class="glyphicon glyphicon-send"></span>Charger l'image
-						</button>
-					 
-				 
+
 			</form>
-		 
+
+		</div>
 	</div>
+
 	<script type="text/javascript">
 	 
 	$("#input-20").fileinput({
@@ -95,14 +93,14 @@
 		browseIcon: '<i class="glyphicon glyphicon-picture"></i>',
 	});
 	</script>
-	
-	<footer>  <nav class=" navbar-inverse  navbar-fixed-bottom"
-			style="height: 20px;">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<p style="color:white">©copyright Université Paris Descartes</p> 
-				</div>
-			</div>
-		</nav>  </footer>
+
+	<footer> <nav class=" navbar-inverse  navbar-fixed-bottom"
+		style="height: 20px;">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<p style="color: white">©copyright Université Paris Descartes</p>
+		</div>
+	</div>
+	</nav> </footer>
 </body>
 </html>
